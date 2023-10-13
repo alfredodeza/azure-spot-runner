@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Define a working directory
+WORK_DIR="/opt/actions-runner"
+
+# Login to Azure using the VM's managed identity
+az login --identity
+
+# Retrieve the GitHub PAT from the Key Vault
+GITHUB_PAT=$(az keyvault secret show --name "GitHubPAT" --vault-name github-vms --query value -o tsv)
+
+# Configure the runner
+$WORK_DIR/config.sh --url https://github.com/alfredodeza/azure-spot-runner --token $GITHUB_PAT
+
+# Schedule the runner to start immediately but in the background
+echo "$WORK_DIR/run.sh" | at now +1 minutes

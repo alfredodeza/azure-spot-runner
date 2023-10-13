@@ -1,0 +1,38 @@
+on: push
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    name: Create Custom Linux Image
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+#    - name: Create Workflow Artifacts
+#      run: |
+#        cd  "$GITHUB_WORKFLOW"
+#        mkdir worflow-artifacts/
+#        echo "echo Installing World... " > $GITHUB_WORKSPACE/workflow-artifacts/install-world.sh  # You can have your own installation script here
+
+
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+
+    - name: Build and Distribute Custom VM Image
+      uses: azure/build-vm-image@v0
+      with:
+        resource-group-name: 'github-vms'
+        location: 'eastus'
+        managed-identity: 'GitHubVMs'
+        source-os-type: 'linux'
+        source-image-type: 'platformimage'
+        source-image: canonical:ubuntuserver:18.04-lts:latest
+        customizer-source: ${{ github.workspace }}/workflow-artifacts
+        customizer-script: |
+          sudo mkdir /buildartifacts
+          sudo cp -r /tmp/ /buildartifacts/
+          sh /buildartifacts/workflow-artifacts/setup-image.sh
+
+
