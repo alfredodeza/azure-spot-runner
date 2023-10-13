@@ -28,7 +28,7 @@ jobs:
         managed-identity: 'GitHubVMs'
         source-os-type: 'linux'
         source-image-type: 'platformimage'
-        source-image: canonical:ubuntuserver:18.04-lts:latest
+        source-image: canonical:ubuntuserver:22.04-lts:latest
         customizer-source: ${{ github.workspace }}/workflow-artifacts
         customizer-script: |
           sudo mkdir /buildartifacts
