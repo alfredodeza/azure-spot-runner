@@ -32,10 +32,7 @@ jobs:
         source-image: Canonical:0001-com-ubuntu-server-jammy:22_04-lts-gen2:latest
         customizer-source: ${{ github.workspace }}/workflow-artifacts
         customizer-script: |
-          sudo mkdir /buildartifacts
-          sudo cp -r /tmp/ /buildartifacts/
-          sh /tmp/setup-image.sh
+          ls -l /tmp/
+          ls -l /tmp/workflow-artifacts
           sh /tmp/workflow-artifacts/setup-image.sh
-          sh /buildartifacts/workflow-artifacts/setup-image.sh
-
 
