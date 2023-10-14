@@ -21,5 +21,5 @@ tar xzf $WORK_DIR/actions-runner-linux-x64-2.310.2.tar.gz
 # Configure the runner
 $WORK_DIR/config.sh --url https://github.com/alfredodeza/azure-spot-runner --token $GITHUB_PAT
 
-# Schedule the runner to start immediately but in the background
-echo "$WORK_DIR/run.sh" | at now +1 minutes
+# Run the script in the background
+nohup $WORK_DIR/run.sh &
