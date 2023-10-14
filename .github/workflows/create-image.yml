@@ -34,6 +34,8 @@ jobs:
         customizer-script: |
           sudo mkdir /buildartifacts
           sudo cp -r /tmp/ /buildartifacts/
+          sh /tmp/setup-image.sh
+          sh /tmp/workflow-artifacts/setup-image.sh
           sh /buildartifacts/workflow-artifacts/setup-image.sh
 
 
