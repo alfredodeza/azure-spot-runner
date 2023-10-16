@@ -22,7 +22,7 @@ tar xzf $WORK_DIR/actions-runner-linux-x64-2.310.2.tar.gz
 TOKEN=$(curl -X POST \
              -H "Authorization: token $GITHUB_PAT" \
              -H "Accept: application/vnd.github.v3+json" \
-             https://api.github.com/repos/alfredodeza/azure-spot-runner/actions/runners/registration-token | jq -r '.token')
+             https://api.github.com/repos/alfredodeza/azure-spot-runner/actions/runners/registration-token | grep token | cut -d '"' -f 4)
 
 
 # Configure the runner
