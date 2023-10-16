@@ -26,7 +26,4 @@ TOKEN=$(curl -X POST \
 
 
 # Configure the runner
-$WORK_DIR/config.sh --url https://github.com/alfredodeza/azure-spot-runner --token $TOKEN
-
-# Run the script in the background
-#nohup $WORK_DIR/run.sh &
+$WORK_DIR/config.sh --unattended --url https://github.com/alfredodeza/azure-spot-runner --token $TOKEN
