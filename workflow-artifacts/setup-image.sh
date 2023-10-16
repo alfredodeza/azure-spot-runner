@@ -6,8 +6,8 @@
 # Define a working directory
 WORK_DIR="/opt/actions-runner"
 
-# Install Azure CLI
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+# Install Azure CLI, should not use sudo
+curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Create a folder
 mkdir -p $WORK_DIR && cd $WORK_DIR
