@@ -18,8 +18,15 @@ curl -O -L https://github.com/actions/runner/releases/download/v2.310.2/actions-
 # Extract the installer
 tar xzf $WORK_DIR/actions-runner-linux-x64-2.310.2.tar.gz
 
+# Create a GitHub runner Token
+TOKEN=$(curl -X POST \
+             -H "Authorization: token $GITHUB_PAT" \
+             -H "Accept: application/vnd.github.v3+json" \
+             https://api.github.com/repos/alfredodeza/azure-spot-runner/actions/runners/registration-token | jq -r '.token')
+
+
 # Configure the runner
-$WORK_DIR/config.sh --url https://github.com/alfredodeza/azure-spot-runner --token $GITHUB_PAT
+$WORK_DIR/config.sh --url https://github.com/alfredodeza/azure-spot-runner --token $TOKEN
 
 # Run the script in the background
-nohup $WORK_DIR/run.sh &
+#nohup $WORK_DIR/run.sh &
