@@ -10,17 +10,22 @@ jobs:
 
     - name: Get GitHub Runner Registration Token
       run: |
-        TOKEN=$(curl -X POST \
-                     -H "Authorization: token ${{ secrets.GITHUB_PAT }}" \
-                     -H "Accept: application/vnd.github.v3+json" \
-                     https://api.github.com/repos/alfredodeza/azure-spot-runner/actions/runners/registration-token | grep token | cut -d '"' -f 4)
-        echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+        set -e
+        RUNNER_TOKEN=$(curl -f -X POST \
+                         -H "Authorization: token ${{ secrets.GITHUB_PAT }}" \
+                         -H "Accept: application/vnd.github.v3+json" \
+                         https://api.github.com/repos/alfredodeza/azure-spot-runner/actions/runners/registration-token | grep token | cut -d '"' -f 4)
+        if [ -z "$RUNNER_TOKEN" ]; then
+          echo "Failed to retrieve the runner token."
+          exit 1
+        fi
+        echo "RUNNER_TOKEN=$RUNNER_TOKEN" >> $GITHUB_ENV
       env:
         GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
 
     - name: Modify cloud-init.txt
       run: |
-        sed -i "2iTOKEN=$TOKEN" workflow-artifacts/cloud-init.txt
+        sed -i "2iRUNNER_TOKEN=$RUNNER_TOKEN" workflow-artifacts/cloud-init.txt
 
     - name: Login via Az module
       uses: azure/login@v1
