@@ -20,7 +20,7 @@ jobs:
 
     - name: Modify cloud-init.txt
       run: |
-        sed -i "2iTOKEN=$TOKEN" cloud-init.txt
+        sed -i "2iTOKEN=$TOKEN" workflow-artifacts/cloud-init.txt
 
     - name: Login via Az module
       uses: azure/login@v1
