@@ -15,7 +15,7 @@ You'll need the following:
 
 ```
 az ad sp create-for-rbac --name "CICD" --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --sdk-auth
-
+```
 
 ## Create an Azure Resource Group
 
