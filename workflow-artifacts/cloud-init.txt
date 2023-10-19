@@ -7,7 +7,7 @@ WORK_DIR="/opt/actions-runner"
 chown -R runner $WORK_DIR
 
 # Configure the runner
-su - runner -c "$WORK_DIR/config.sh --unattended --url https://github.com/alfredodeza/azure-spot-runner --token $TOKEN"
+su - runner -c "$WORK_DIR/config.sh --unattended --url https://github.com/alfredodeza/azure-spot-runner --token $RUNNER_TOKEN"
 
 # Schedule the runner to start immediately but in the background
 nohup su - runner -c "$WORK_DIR/run.sh" &

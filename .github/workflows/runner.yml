@@ -25,7 +25,12 @@ jobs:
 
     - name: Modify cloud-init.txt
       run: |
+        set -e
         sed -i "2iRUNNER_TOKEN=$RUNNER_TOKEN" workflow-artifacts/cloud-init.txt
+        if ! grep -q "RUNNER_TOKEN=$RUNNER_TOKEN" workflow-artifacts/cloud-init.txt; then
+          echo "Modification with sed failed."
+          exit 1
+        fi
 
     - name: Login via Az module
       uses: azure/login@v1
