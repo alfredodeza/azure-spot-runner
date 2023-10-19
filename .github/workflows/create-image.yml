@@ -8,13 +8,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-#    - name: Create Workflow Artifacts
-#      run: |
-#        cd  "$GITHUB_WORKFLOW"
-#        mkdir worflow-artifacts/
-#        echo "echo Installing World... " > $GITHUB_WORKSPACE/workflow-artifacts/install-world.sh  # You can have your own installation script here
-
-
     - name: Login via Az module
       uses: azure/login@v1
       with:

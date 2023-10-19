@@ -3,44 +3,43 @@ on: workflow_dispatch
 jobs:
   job1:
     runs-on: ubuntu-latest
-    name: Create Custom Linux Image
+    name: Launch Runner
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-#    - name: Create Workflow Artifacts
-#      run: |
-#        cd  "$GITHUB_WORKFLOW"
-#        mkdir worflow-artifacts/
-#        echo "echo Installing World... " > $GITHUB_WORKSPACE/workflow-artifacts/install-world.sh  # You can have your own installation script here
+    - name: Get GitHub Runner Registration Token
+      run: |
+        TOKEN=$(curl -X POST \
+                     -H "Authorization: token ${{ secrets.GITHUB_PAT }}" \
+                     -H "Accept: application/vnd.github.v3+json" \
+                     https://api.github.com/repos/alfredodeza/azure-spot-runner/actions/runners/registration-token | grep token | cut -d '"' -f 4)
+        echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+      env:
+        GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
 
+    - name: Modify cloud-init.txt
+      run: |
+        sed -i "2iTOKEN=$TOKEN" cloud-init.txt
 
     - name: Login via Az module
       uses: azure/login@v1
       with:
         creds: ${{secrets.AZURE_CREDENTIALS}}
 
+    - name: Find the latest image URI
+      id: find_image
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          IMAGE_URI=$(az image list --resource-group github-vms --query "[-1].id" --output tsv)
+          echo "::set-output name=image_uri::$IMAGE_URI"
+
+
     - name: CREATE VM
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          az vm create --resource-group myResourceGroup  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username "${{ github.actor }}" --admin-password "${{ github.token }}" --location  eastus2 \
-          --image "${{ steps.<workflow_step_id>.outputs.custom-image-uri }}"
-
-
-    - name: Build and Distribute Custom VM Image
-      uses: azure/build-vm-image@v0
-      with:
-        resource-group-name: 'github-vms'
-        location: 'eastus'
-        managed-identity: 'GitHubVMs'
-        source-os-type: 'linux'
-        source-image-type: 'platformimage'
-        source-image: canonical:ubuntuserver:18.04-lts:latest
-        customizer-source: ${{ github.workspace }}/workflow-artifacts
-        customizer-script: |
-          sudo mkdir /buildartifacts
-          sudo cp -r /tmp/ /buildartifacts/
-          sh /buildartifacts/workflow-artifacts/setup-image.sh
-
-
+          az vm create --resource-group github-vms  --name "app-vm-${{ GITHUB.RUN_NUMBER }}"  --admin-username "runner" --admin-password "${{ secrets.VM_PASSWORD }}" --location  eastus \
+          --custom-data workflow-artifacts/cloud-init.txt \
+          --image "${{ steps.find_image.outputs.image_uri }}"
